@@ -114,6 +114,7 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")
 
 @app.get("/")
+@app.head("/")
 async def root():
     """Redirect to the static frontend."""
     from fastapi.responses import RedirectResponse
