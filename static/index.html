@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus | Advanced Document Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i data-lucide="cpu" class="brand-icon"></i>
+                <h2>Nexus AI</h2>
+            </div>
+            
+            <div class="document-section">
+                <h3>Knowledge Base</h3>
+                <div class="upload-area" id="drop-zone">
+                    <i data-lucide="file-up" class="upload-icon"></i>
+                    <p>Drag & drop PDF here</p>
+                    <span>or</span>
+                    <label class="btn-primary btn-small">
+                        Browse Files
+                        <input type="file" id="file-input" accept="application/pdf" hidden>
+                    </label>
+                </div>
+                
+                <div class="status-indicator" id="status-container">
+                    <div class="status-dot warning" id="status-dot"></div>
+                    <span id="status-text">System initializing...</span>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <button id="clear-btn" class="btn-secondary">
+                    <i data-lucide="trash-2"></i> Clear Memory
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-container">
+            <header class="chat-header">
+                <div>
+                    <h1>Advanced RAG Assistant</h1>
+                    <p>Powered by LangChain, FAISS & HuggingFace Models</p>
+                </div>
+            </header>
+
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot">
+                    <div class="avatar"><i data-lucide="bot"></i></div>
+                    <div class="message-content">
+                        Hello! I am Nexus, your advanced document intelligence assistant. Upload a PDF document on the left, and I'll use state-of-the-art semantic search, cross-encoder reranking, and query rewriting to answer your questions accurately.
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <form id="chat-form" class="chat-form">
+                    <input type="text" id="chat-input" placeholder="Ask anything about your document..." autocomplete="off">
+                    <button type="submit" id="send-btn" class="btn-primary icon-btn">
+                        <i data-lucide="send"></i>
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
