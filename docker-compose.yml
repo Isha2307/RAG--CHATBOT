@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  # ─── FastAPI RAG Backend ───────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rag_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"          # Internal only — Nginx proxies this
+    environment:
+      - PORT=8000
+    env_file:
+      - .env                 # Mount your real secrets here on the VPS
+    volumes:
+      - ./backend/data:/app/backend/data   # Persist uploaded PDFs
+    networks:
+      - rag_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s      # Allow time for model loading
+
+  # ─── Next.js Frontend ─────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://backend:8000}
+    container_name: rag_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"          # Internal only — Nginx proxies this
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - rag_network
+
+networks:
+  rag_network:
+    driver: bridge
