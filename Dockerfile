@@ -17,10 +17,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy full application code into container
 COPY backend ./backend
-COPY api.py main.py config.py ./
+COPY api.py main.py ./
 
 # Expose port
 EXPOSE 8000
 
-# Run FastAPI app
-CMD ["python", "-m", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run FastAPI app using PORT env var (Render sets this automatically)
+CMD ["sh", "-c", "python -m uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
