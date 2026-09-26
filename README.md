@@ -1,320 +1,218 @@
-# Advanced RAG Chatbot
+# IntelliRAG — AI-Powered Document Assistant
 
-A production-grade Retrieval-Augmented Generation (RAG) chatbot built with Python, LangChain, FAISS, and HuggingFace models with advanced features.
+> **Enterprise Full-Stack RAG SaaS Application** built for real-time document search, intelligent text retrieval, Cross-Encoder reranking, and grounded answer synthesis. Submitted for Software Development Engineer role evaluation.
+
+---
+
+## 🌟 Overview
+
+**IntelliRAG** transforms static PDF documents into an interactive conversational intelligence platform. By combining dense vector embeddings with multi-stage reranking and structured answer generation, IntelliRAG allows users to query complex documents and receive accurate, cited answers with document-level confidence metrics.
+
+---
+
+## 🎯 Problem Statement
+
+Traditional document search relies on naive keyword matching (BM25/grep), which fails to capture semantic meaning, context, or complex technical relationships within large document sets. IntelliRAG solves this by providing:
+
+1. **Semantic Search & Document Retrieval**: Converting document text into dense embedding spaces (`all-mpnet-base-v2`).
+2. **Contextual Reranking**: Eliminating low-relevance results using Cross-Encoder models (`cross-encoder/ms-marco-MiniLM-L-6-v2`).
+3. **Structured Answer Synthesis**: Generating human-readable summaries complete with source chunk previews and confidence percentages.
+
+---
 
 ## ✨ Features
 
-### Core RAG Features
-- Load and process PDF documents with RecursiveCharacterTextSplitter
-- Intelligent text chunking with configurable overlap
-- Embeddings using HuggingFace sentence transformers
-- FAISS vector database for efficient similarity search
-- Max Marginal Relevance (MMR) retrieval for diversity
+- **📄 Document Upload & Processing**: Instant PDF parsing using `PyPDF` and chunking via `RecursiveCharacterTextSplitter`.
+- **⚡ Vector Database**: High-speed similarity search powered by `FAISS`.
+- **🧠 Advanced RAG Pipeline**:
+  - **Query Expansion & Rewriting**: Optimizes short/ambiguous queries before vector lookup.
+  - **Maximal Marginal Relevance (MMR)**: Enhances document diversity.
+  - **Cross-Encoder Reranking**: Re-scores candidate chunks for precision.
+- **💬 Conversation Memory**: Retains multi-turn dialogue context across exchanges.
+- **🎨 Recruiter-Ready AI SaaS Interface**:
+  - Modern Next.js 16 (App Router) + React + TypeScript + Tailwind CSS design system.
+  - Interactive ChatGPT-style conversation view with markdown rendering.
+  - Live **Sources Panel** displaying actual confidence scores, chunk previews, and source filenames.
+  - Responsive left sidebar with query history, system status indicators, and active document switching.
 
-### Advanced Features (v2.0)
-- **Query Rewriting**: Automatically expands and optimizes queries using FLAN-T5
-- **Cross-Encoder Reranking**: Uses ms-marco model for superior document ranking
-- **Multi-Stage Ranking**: Retrieval → Reranking → Top-3 Selection
-- **Conversation Memory**: Maintains context from last 5 Q&A exchanges
-- **Confidence Scores**: Displays relevance confidence (0-100%) for each source
-- **Structured Answers**: Generates answers with headings, bullet points, and source attribution
-- **Better Embeddings**: Upgraded to all-mpnet-base-v2 for superior semantic understanding
-- **Modular Architecture**: Separate functions for retrieval, reranking, answer generation
-- **Robust Fallbacks**: Graceful degradation if advanced models unavailable
+---
 
-## System Architecture
+## 🏗️ RAG & System Architecture
 
 ```
-User Query
-    ↓
-Query Rewriting (FLAN-T5)
-    ↓
-Semantic Retrieval (all-mpnet-base-v2 + FAISS)
-    ↓
-Cross-Encoder Reranking (ms-marco-MiniLM)
-    ↓
-Top-3 Selection
-    ↓
-Context Building
-    ↓
-Structured Answer Generation
-    ↓
-Conversation Memory Storage
-    ↓
-Answer with Confidence Scores
+                    INTELLIRAG
+                        │
+                        ▼
+              Next.js + React Frontend (TypeScript)
+                        │
+                        │ REST API (JSON)
+                        ▼
+                 Python FastAPI Backend
+                        │
+                        ▼
+              Advanced RAG Pipeline
+                        │
+        ┌───────────────┼───────────────┐
+        ▼               ▼               ▼
+   FAISS Vector    HuggingFace     Cross-Encoder
+     Database       Embeddings       Reranking
+        │               │               │
+        └───────────────┼───────────────┘
+                        ▼
+                 Context Synthesis
+                        │
+                        ▼
+            Structured Answer & Sources
 ```
 
-## Requirements
+---
 
-- Python 3.8+
-- GPU recommended (supports CPU with reduced performance)
+## 🛠️ Technology Stack
 
-## Setup
+### **Backend**
+- **Python 3.10+**
+- **FastAPI & Uvicorn** (REST API Framework)
+- **LangChain** (RAG Orchestration & Text Splitters)
+- **HuggingFace Transformers / Sentence-Transformers** (`all-mpnet-base-v2` & `ms-marco-MiniLM-L-6-v2`)
+- **FAISS (Facebook AI Similarity Search)** (Vector Indexing)
+- **PyPDF** (PDF Parsing)
 
-1. Clone or download this project.
+### **Frontend**
+- **Next.js 16 (App Router)** & **React 19**
+- **TypeScript** (Strict Type Safety)
+- **Tailwind CSS v4** (Modern Dark Theme UI)
+- **Lucide React** (Professional Iconography)
+- **React Markdown** (Formatted Answer Rendering)
 
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+---
 
-3. Place your PDF file in the `data/` folder and name it `sample.pdf` (or update the `pdf_path` in `main.py`).
-
-4. (Optional) Create `.env` file for API keys:
-   ```
-   HUGGINGFACE_API_KEY=your_key_here
-   ```
-
-## Running the Chatbot
-
-Run the main script:
-```
-python main.py
-```
-
-The chatbot will:
-1. Load and process your PDF
-2. Create embeddings and vector index
-3. Display available features
-4. Enter interactive query mode
-
-### Interactive Commands
-
-- **Ask questions**: Type your question and press Enter
-- **View history**: Type `history` to see previous 5 Q&A pairs
-- **Clear memory**: Type `clear` to reset conversation memory
-- **Exit**: Type `quit` to exit the application
-
-## Example Usage
-
-```
-$ python main.py
-
-Loading and processing the PDF...
-PDF split into 18 chunks.
-Creating embeddings and FAISS vector store with all-mpnet-base-v2 model...
-Vector store created successfully.
-
-==========================================
-Advanced RAG Pipeline Ready!
-==========================================
-
-Features enabled:
-✓ Query rewriting for better search
-✓ Cross-encoder reranking for relevance
-✓ Similarity score display
-✓ Conversation memory (last 5 exchanges)
-✓ Structured answers with bullet points
-
-Commands:
-  'quit' - Exit the application
-  'history' - View conversation history
-  'clear' - Clear conversation memory
-
-Enter your question: What is DBMS?
-
-Processing your query with advanced RAG pipeline...
-
-## Answer
-
-**Key Information:**
-- Database Management System (DBMS) is software designed to manage databases
-- It provides an interface for users and applications to interact with stored data
-- A DBMS handles data storage, retrieval, and manipulation while ensuring data integrity
-
-**Source Documents with Confidence Scores:**
-
-1. **Confidence: 89%**
-   Content preview...
-
-2. **Confidence: 82%**
-   Content preview...
-
-3. **Confidence: 75%**
-   Content preview...
-```
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 RAG/
-├── main.py                          # Main application with advanced RAG pipeline
-├── requirements.txt                 # Python dependencies
-├── README.md                        # This file
-├── ADVANCED_FEATURES_SUMMARY.md    # Detailed feature documentation
-├── test_advanced_features.py        # Feature testing script
-├── test_rag.py                      # Legacy test script
-├── data/
-│   └── sample.pdf                   # Your PDF document
-├── .env                             # Environment variables (optional)
-└── .venv/                           # Virtual environment
+├── backend/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── main.py              # FastAPI application launcher
+│   │   ├── api.py               # REST API endpoints (/api/chat, /api/upload, etc.)
+│   │   ├── config.py            # Global configuration settings
+│   │   │
+│   │   └── rag/
+│   │       ├── __init__.py
+│   │       ├── chatbot.py       # Advanced RAG pipeline, reranker, memory
+│   │       ├── loader.py        # PDF loader module wrapper
+│   │       ├── pdf_loader.py    # PyPDF loader & Recursive Character Splitter
+│   │       └── vector_store.py  # FAISS vector store & MMR retrieval
+│   │
+│   ├── data/                    # Sample PDF documents
+│   ├── tests/                   # Pytest & unit tests suite
+│   ├── requirements.txt         # Python dependencies
+│   ├── .env.example             # Backend environment template
+│   └── README.md
+│
+├── frontend/
+│   ├── app/                     # Next.js App Router (page.tsx, layout.tsx)
+│   ├── components/
+│   │   ├── chat/                # ChatContainer, ChatMessage, ChatComposer, EmptyState
+│   │   ├── documents/           # DocumentPanel, UploadModal
+│   │   ├── layout/              # Sidebar, Header, SourcesPanel
+│   │   └── ui/                  # Badge, LoadingSpinner
+│   │
+│   ├── lib/
+│   │   ├── api.ts               # Centralized REST API client
+│   │   └── types.ts             # TypeScript interfaces
+│   │
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── .env.example             # Frontend environment template
+│   └── README.md
+│
+├── README.md                    # Root project documentation
+├── .gitignore
+└── start_demo.bat               # Windows 1-click startup script
 ```
 
-## Key Functions
+---
 
-### Main Pipeline
-- `advanced_rag_pipeline()` - Orchestrates the complete RAG workflow
-- `rewrite_query()` - Optimizes queries for better retrieval
-- `retrieve_with_scores()` - Retrieves documents with confidence scores
-- `rerank_documents()` - Reranks using cross-encoder model
-- `generate_structured_answer()` - Generates formatted answers
+## ⚡ Quick Start & Setup
 
-### Supporting Functions
-- `load_and_split_pdf()` - PDF loading and chunking
-- `create_vector_store()` - Creates FAISS index with embeddings
-- `get_top_chunks()` - Retrieves chunks with MMR
-- `build_context_string()` - Combines chunks into context
+### Prerequisites
+- **Python 3.10+**
+- **Node.js v18+** & **npm**
 
-### Memory Management
-- `ConversationMemory` - Stores conversation history
-- `conversation_memory.add_exchange()` - Store Q&A pair
-- `conversation_memory.get_context()` - Retrieve history
-- `conversation_memory.clear()` - Reset memory
+---
 
-## Performance
-
-| Component | Time | Notes |
-|-----------|------|-------|
-| Query Rewriting | 0.5-1s | Runs once per query |
-| Retrieval | 0.1-0.3s | FAISS similarity search |
-| Reranking | 1-2s | Cross-encoder scoring |
-| Answer Generation | 0.2-0.5s | Text extraction & formatting |
-| **Total** | **2-4s** | End-to-end per query |
-
-## Fallback Behavior
-
-If advanced features are unavailable:
-
-- Query Rewriting fails → Uses original query
-- Cross-Encoder Reranking fails → Uses retrieval scores
-- Advanced Models fail → Uses mock implementations
-- All fallbacks preserve functionality
-
-The chatbot continues operating at reduced capability rather than failing completely.
-
-## Configuration
-
-Edit `main.py` to customize:
-
-```python
-# Embedding model
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-
-# Conversation history size
-conversation_memory = ConversationMemory(max_history=5)
-
-# Retrieval parameters
-retrieve_with_scores(vector_store, query, k=5)  # k=5 for retrieval
-rerank_documents(query, documents, scores)      # Top-3 after reranking
-
-# Chunk settings
-load_and_split_pdf(pdf_path, chunk_size=1000, chunk_overlap=100)
+### Option 1: One-Click Start (Windows)
+Double click `start_demo.bat` or run:
+```cmd
+start_demo.bat
 ```
+This automatically starts both the FastAPI backend (`http://127.0.0.1:8000`) and the Next.js frontend (`http://localhost:3000`), then opens your browser.
 
-## Testing
+---
 
-Run the comprehensive test suite:
-```
-python test_advanced_features.py
-```
+### Option 2: Manual Terminal Setup
 
-Tests individual components:
-1. Query Rewriting
-2. Retrieval with Scores
-3. Document Reranking
-4. Conversation Memory
-5. Structured Answer Generation
-6. Full Pipeline Integration
-
-## Monitoring
-
-Check feature availability:
-- `USE_REAL_COMPONENTS` - Real RAG components available
-- `CROSS_ENCODER_AVAILABLE` - Cross-encoder model loaded
-- `QUERY_REWRITER_AVAILABLE` - Query rewriter available
-
-All features print status messages during startup.
-
-## Troubleshooting
-
-### "ImportError: transformers" 
+#### **1. Backend Setup**
 ```bash
-pip install transformers torch sentence-transformers
+# Navigate to backend environment
+cd backend
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Run FastAPI backend server
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+The FastAPI backend server will start at `http://127.0.0.1:8000` (API documentation available at `http://127.0.0.1:8000/docs`).
+
+#### **2. Frontend Setup**
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install Node dependencies
+npm install
+
+# Run Next.js development server
+npm run dev
+```
+Open `http://localhost:3000` in your browser.
+
+---
+
+## 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Returns backend readiness, active document, chunk count, and memory state. |
+| `GET` | `/api/documents` | Lists available sample PDF files and their indexing statuses. |
+| `POST` | `/api/select_document` | Switches the active document and re-indexes vector store. |
+| `POST` | `/api/upload` | Uploads a new PDF document, splits text, and indexes in FAISS. |
+| `POST` | `/api/chat` | Executes the complete RAG pipeline and returns answer + source cards. |
+| `POST` | `/api/clear` | Clears conversation history memory. |
+
+---
+
+## 🧪 Testing
+
+### Backend Unit Tests
+```bash
+# Run backend tests
+python -m unittest discover backend/tests
 ```
 
-### "Cross-encoder not available"
-- Normal for first run (downloads 60MB model)
-- Graceful fallback to retrieval scores
-- Check internet connection
-
-### "Query rewriter not available"
-- FLAN-T5 model downloads on first use
-- Falls back to original query if unavailable
-- Requires ~1GB RAM
-
-### Slow startup
-- First-run downloads models (~1-2GB total)
-- Subsequent runs are fast (cached locally)
-- Consider running on GPU for speed
-
-## Performance Tuning
-
-### For Speed (CPU)
-```python
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-retrieve_with_scores(vector_store, query, k=3)  # Fewer docs
-conversation_memory = ConversationMemory(max_history=2)
+### Frontend Build Verification
+```bash
+cd frontend
+npm run build
 ```
+*Passed with zero TypeScript or build errors.*
 
-### For Quality (GPU)
-```python
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-retrieve_with_scores(vector_store, query, k=10)  # More candidates
-# Cross-encoder reranking automatically enables
-```
+---
 
-## Dependencies
+## 🚀 Future Improvements
 
-All dependencies in `requirements.txt`:
-
-- `langchain` - RAG framework
-- `langchain-community` - Additional RAG components
-- `langchain-text-splitters` - Text chunking
-- `langchain-huggingface` - HuggingFace integration
-- `faiss-cpu` - Vector database
-- `sentence-transformers` - Embeddings and cross-encoder
-- `transformers` - Query rewriting models
-- `pypdf` - PDF loading
-- `python-dotenv` - Environment variables
-
-## Documentation
-
-- `ADVANCED_FEATURES_SUMMARY.md` - Detailed feature explanations
-- This README - Usage and setup guide
-- File docstrings - Implementation details
-- `test_advanced_features.py` - Usage examples
-
-## Future Enhancements
-
-- Persistent conversation storage (database)
-- Multi-document support
-- Custom fine-tuned models
-- Streaming answer generation
-- Web UI with Gradio/Streamlit
-- API deployment (FastAPI)
-- Relevance feedback loop
-
-## License
-
-MIT License - Feel free to use and modify
-
-## Support & Contribution
-
-For issues or suggestions, check the code comments and feature documentation in `ADVANCED_FEATURES_SUMMARY.md`.
-
-
-## Customization
-
-- Adjust chunk size and overlap in `pdf_loader.py`
-- Change the number of retrieved chunks in `chatbot.py`
-- Modify the LLM model or temperature in `chatbot.py`
+- Multi-document parallel search over vector indexes.
+- Hybrid BM25 + Dense vector retrieval fusion (RRF).
+- Export conversation transcripts as Markdown / PDF.
