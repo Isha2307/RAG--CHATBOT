@@ -1,0 +1,2 @@
+# Root requirements bridge pointing to backend/requirements.txt for Render auto-build
+-r backend/requirements.txt
